@@ -5,22 +5,39 @@ export default class Application {
   constructor(element) {
     this.form = element.querySelector(`.new-movie`);
     this.list = element.querySelector(`.movie-list`);
-    this.data = [
-      {title: `Batman vs Superman`, score: 4},
-      {title: `Batman Begins`, score: 4000},
-    ];
+    this.url = `http://tiny-tn.herokuapp.com/collections/movies`;
+    this.data = [];
+
+    fetch(this.url).then((response) => {
+      return response.json();
+    }).then((serverInfo) => {
+      this.data = serverInfo;
+
+      this.renderList();
+    });
 
     this.formview = new FormView(this.form, this);
-    this.render();
+    this.renderList();
   }
 
   add(movie) {
-    this.data = [movie, ...this.data];
+    fetch(this.url, {
+      method: `POST`,
+      headers: {
+        Accept: `application/json`,
+        'Content-type': `application/json`,
+      },
+      body: JSON.stringify(movie),
+    }).then((response) => {
+      return response.json();
+    }).then((result) => {
+      this.data = [result, ...this.data];
 
-    this.render();
+      this.renderList();
+    });
   }
 
-  render() {
+  renderList() {
     this.list.innerHTML = ``;
 
     this.data.forEach((movie) => {
