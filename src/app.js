@@ -41,9 +41,17 @@ export default class Application {
     this.list.innerHTML = ``;
 
     this.data.forEach((movie) => {
-      const v = new MovieItem(movie);
+      const v = new MovieItem(movie, this);
 
       this.list.appendChild(v.el);
     });
+  }
+
+  remove(movieInfo) {
+    this.data = this.data.filter((current) => {
+      return current !== movieInfo;
+    });
+
+    this.renderList();
   }
 }
